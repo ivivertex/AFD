@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title data-i18n="config">Конфигурация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main>
+        <h1 data-i18n="config">Конфигурация</h1>
+
+        <!-- Экспорт/Импорт -->
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="exportConfig()" data-i18n="exportConfig">Экспорт</button>
+            <button class="btn btn-success" onclick="document.getElementById('importFile').click()" data-i18n="importConfig">Импорт</button>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importConfig(this.files[0])">
+        </div>
+
+        <div id="result" style="margin-top: 20px; text-align:center;"></div>
+
+        <!-- Управление яркостью индикации (перенесено со страницы калибровки) -->
+        <div class="brightness-block">
+            <label for="brightnessSlider" data-i18n="ledBrightness">Яркость индикации:</label>
+            <input type="range" id="brightnessSlider" min="0" max="100" value="100">
+            <span id="brightnessValue">100</span>%
+            <button class="btn btn-primary" onclick="setBrightness()" data-i18n="setBrightness">Установить</button>
+        </div>
+
+        <!-- Блок настройки активного уровня датчика (перенесено со страницы калибровки) -->
+        <div class="level-config-block">
+            <label for="levelActiveLevel" data-i18n="levelSensorType">Активный уровень датчика:</label>
+            <select id="levelActiveLevel">
+                <option value="1" data-i18n="levelActiveHigh">HIGH</option>
+                <option value="0" data-i18n="levelActiveLow">LOW</option>
+            </select>
+            <button class="btn btn-primary" onclick="setLevelConfig()" data-i18n="setLevelConfig">Применить</button>
+        </div>
+
+        <div class="nav-links">
+            <a href="/" data-i18n="back">На главную</a>
+        </div>
+        <div class="lang-switcher">
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="ru">RU</button>
+        </div>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>

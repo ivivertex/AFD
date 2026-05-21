@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title data-i18n="mqtt">MQTT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main>
+        <h1 data-i18n="mqtt">MQTT</h1>
+
+        <div class="status-card" id="mqttStatus">Загрузка...</div>
+
+        <form id="mqttForm">
+            <label for="server" data-i18n="mqttServer">Сервер (IP или имя):</label>
+            <input type="text" id="server" name="server" required>
+
+            <label for="port" data-i18n="mqttPort">Порт:</label>
+            <input type="number" id="port" name="port" value="1883" min="1" max="65535">
+
+            <label for="user" data-i18n="mqttUser">Пользователь (необязательно):</label>
+            <input type="text" id="user" name="user">
+
+            <label for="password" data-i18n="mqttPassword">Пароль (необязательно):</label>
+            <input type="password" id="password" name="password">
+
+            <label for="prefix" data-i18n="mqttPrefix">Префикс топиков:</label>
+            <input type="text" id="prefix" name="prefix" value="AFD">
+
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" onclick="saveMQTT()" id="mqttSaveBtn" data-i18n="mqttSave">Сохранить</button>
+            </div>
+        </form>
+
+        <!-- Блок для отображения результата сохранения -->
+        <div id="mqttResult" style="margin-top: 10px; text-align:center;"></div>
+
+        <h2 data-i18n="discoveryTitle">Обнаружение</h2>
+        <div class="button-group">
+            <button type="button" class="btn btn-primary" onclick="sendDiscovery()" data-i18n="sendDiscovery">Отправить MQTT Discovery</button>
+        </div>
+        <div id="discoveryResult" style="margin-top: 10px; text-align:center;"></div>
+
+        <div class="nav-links">
+            <a href="/" data-i18n="back">На главную</a>
+        </div>
+        <div class="lang-switcher">
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="ru">RU</button>
+        </div>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>

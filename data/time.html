@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title data-i18n="time">Время</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main>
+        <h1 data-i18n="time">Время</h1>
+
+        <div class="status-card" id="currentTime">Загрузка...</div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="syncNTP()" data-i18n="syncNTP">Синхронизировать с NTP</button>
+        </div>
+
+        <h2 data-i18n="ntpServer">NTP-сервер</h2>
+        <form id="ntpForm">
+            <label for="ntpServer" data-i18n="ntpServer">NTP-сервер:</label>
+            <input type="text" id="ntpServer" name="ntpServer" value="pool.ntp.org">
+
+            <label for="timezone" data-i18n="timezone">Часовой пояс (смещение от UTC):</label>
+            <input type="number" id="timezone" name="timezone" value="3" min="-12" max="14" step="1">
+
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" onclick="saveNTPServer()" data-i18n="saveNTPServer">Сохранить NTP-сервер</button>
+            </div>
+        </form>
+
+        <h2 data-i18n="manualSet">Ручная установка</h2>
+        <form id="timeForm">
+            <label data-i18n="year">Год:</label>
+            <input type="number" id="year" min="2000" max="2099" required>
+
+            <label data-i18n="month">Месяц:</label>
+            <input type="number" id="month" min="1" max="12" required>
+
+            <label data-i18n="day">День:</label>
+            <input type="number" id="day" min="1" max="31" required>
+
+            <label data-i18n="hour2">Час:</label>
+            <input type="number" id="hour" min="0" max="23" required>
+
+            <label data-i18n="minute2">Минута:</label>
+            <input type="number" id="minute" min="0" max="59" required>
+
+            <label data-i18n="second">Секунда:</label>
+            <input type="number" id="second" min="0" max="59" required>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" onclick="setTime()" data-i18n="setTime">Установить время</button>
+            </div>
+        </form>
+
+        <div class="nav-links">
+            <a href="/" data-i18n="back">На главную</a>
+        </div>
+        <div class="lang-switcher">
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="ru">RU</button>
+        </div>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>

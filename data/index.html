@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title data-i18n="title">Автоматический дозатор удобрений</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main>
+        <h1 data-i18n="title">Автоматический дозатор удобрений</h1>
+        
+        <div class="status-grid">
+            <div class="status-card" id="status">
+                <span data-i18n="statusPump">Насос:</span> <span class="value">Загрузка...</span>
+            </div>
+            <div class="status-card" id="levelStatus">
+                <span data-i18n="statusLevel">Уровень:</span> <span class="value">Загрузка...</span>
+            </div>
+            <div class="status-card" id="calibrationStatus">
+                <span data-i18n="statusCalibration">Калибровка:</span> <span class="value">Загрузка...</span>
+            </div>
+            <div class="status-card" id="mqttStatus">
+                <span data-i18n="statusMQTT">MQTT:</span> <span class="value">Загрузка...</span>
+            </div>
+        </div>
+
+        <!-- Единая кнопка для включения/выключения насоса -->
+        <div class="button-group">
+            <button class="btn btn-primary" id="togglePumpBtn" onclick="togglePump()">Загрузка...</button>
+        </div>
+
+        <!-- Ручное дозирование -->
+        <div class="dispense-block">
+            <label for="dispenseVolume" data-i18n="manualRun">Ручной запуск (мл):</label>
+            <input type="number" id="dispenseVolume" min="1" value="0">
+            <button class="btn btn-success" onclick="manualDispense()" data-i18n="runNow">Запустить</button>
+        </div>
+
+        <div class="progress-container" id="progressContainer" style="display:none;">
+            <div class="progress-bar" id="progressBar"></div>
+            <span class="progress-text" id="progressText"></span>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/wifi" data-i18n="wifiSettings">Настройки WiFi</a> | 
+            <a href="/calibrate" data-i18n="calibration">Калибровка</a> | 
+            <a href="/schedule" data-i18n="schedule">Расписание</a> |
+            <a href="/time" data-i18n="time">Время</a> |
+            <a href="/mqtt" data-i18n="mqtt">MQTT</a> |
+            <a href="/config" data-i18n="config">Конфигурация</a> |
+            <a href="/diagnostics" data-i18n="diagnostics">Диагностика</a>
+        </nav>
+
+        <div class="lang-switcher">
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="ru">RU</button>
+        </div>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>

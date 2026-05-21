@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title data-i18n="calibration">Калибровка</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main>
+        <h1 data-i18n="calibration">Калибровка</h1>
+
+        <!-- Выбор типа калибровки -->
+        <div class="calibration-type">
+            <label><input type="radio" name="calibType" value="standard" checked> <span data-i18n="calibStandard">Обычная</span></label>
+            <label><input type="radio" name="calibType" value="multi"> <span data-i18n="calibMulti">Многократная (3 замера)</span></label>
+            <label><input type="radio" name="calibType" value="fixed"> <span data-i18n="calibFixed">Фиксированное время</span></label>
+            <label><input type="radio" name="calibType" value="manual"> <span data-i18n="calibManual">Ручной ввод</span></label>
+        </div>
+
+        <!-- Общие элементы (объём для обычной и многократной) -->
+        <div id="standardBlock">
+            <label for="volume" data-i18n="targetVolume">Целевой объём (мл):</label>
+            <input type="number" id="volume" min="1" step="1" value="100">
+        </div>
+
+        <!-- Блок для многократной калибровки (скрыт по умолчанию) -->
+        <div id="multiBlock" style="display:none;">
+            <p data-i18n="multiDesc">Выполните 3 замера. После каждого нажимайте "Стоп калибровки".</p>
+            <div id="resultsList"></div>
+            <button class="btn btn-secondary" onclick="resetCalibrations()" data-i18n="resetResults">Сбросить</button>
+        </div>
+
+        <!-- Блок для фиксированного времени -->
+        <div id="fixedBlock" style="display:none;">
+            <label for="fixedTime" data-i18n="fixedTimeLabel">Время (сек):</label>
+            <select id="fixedTime">
+                <option value="30">30</option>
+                <option value="60">60</option>
+                <option value="120">120</option>
+            </select>
+            <!-- Поле ввода объёма появляется после остановки калибровки -->
+            <div id="fixedVolumeBlock" style="display:none; margin-top:15px;">
+                <label for="fixedVolume" data-i18n="fixedVolumeLabel">Собранный объём (мл):</label>
+                <input type="number" id="fixedVolume" min="1" step="1">
+                <button class="btn btn-primary" onclick="saveFixedCalibration()" data-i18n="saveFixed">Сохранить</button>
+            </div>
+            <div id="fixedProgress" style="margin-top:10px; font-size:14px;"></div>
+        </div>
+
+        <!-- Блок для ручного ввода -->
+        <div id="manualBlock" style="display:none;">
+            <label for="manualFlow" data-i18n="manualFlowLabel">Расход (мл/с):</label>
+            <input type="number" id="manualFlow" step="0.01" min="0.01">
+            <button class="btn btn-primary" onclick="saveManualFlow()" data-i18n="saveManual">Сохранить</button>
+        </div>
+
+        <!-- Единая кнопка для старта/стопа калибровки -->
+        <div class="button-group">
+            <button class="btn btn-primary" id="toggleCalibBtn" onclick="toggleCalibration()">Загрузка...</button>
+        </div>
+
+        <div class="status-card" id="status" data-i18n="notCalibrating">Не калибруется</div>
+        <div id="result" style="margin-top: 20px; text-align:center;"></div>
+
+        <div class="nav-links">
+            <a href="/" data-i18n="back">На главную</a>
+        </div>
+        <div class="lang-switcher">
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="ru">RU</button>
+        </div>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>

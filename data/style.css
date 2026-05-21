@@ -1,0 +1,462 @@
+/* ===== Базовые стили ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 15px;
+  line-height: 1.5;
+  color: #333;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #e9ecef;
+}
+
+h1 {
+  text-align: center;
+  color: #212529;
+  margin-bottom: 25px;
+  font-weight: 400;
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.4em;
+  margin: 25px 0 15px;
+  color: #495057;
+  font-weight: 400;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 8px;
+}
+
+/* ===== Переключатель языка ===== */
+.lang-switcher {
+  text-align: center;
+  margin-top: 20px;
+}
+.lang-btn {
+  background: #e9ecef;
+  border: 1px solid #ced4da;
+  padding: 4px 12px;
+  margin: 0 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.lang-btn.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* ===== Статус карточки ===== */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.status-card {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #e9ecef;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.status-card .value {
+  display: block;
+  font-size: 20px;
+  font-weight: 500;
+  margin-top: 5px;
+  color: #212529;
+}
+
+/* ===== Кнопки ===== */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.btn {
+  border: none;
+  border-radius: 4px;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: #0069d9;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-danger:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+.btn-success:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+.btn-secondary:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+/* Цветные кнопки для состояний вкл/выкл */
+.btn-on {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+.btn-on:hover:not(:disabled) {
+  background-color: #c82333 !important;
+}
+
+.btn-off {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+.btn-off:hover:not(:disabled) {
+  background-color: #218838 !important;
+}
+
+/* ===== Ручное дозирование ===== */
+.dispense-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+.dispense-block label {
+  margin-bottom: 5px;
+}
+.dispense-block input {
+  width: 150px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+@media (min-width: 600px) {
+  .dispense-block {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+  }
+  .dispense-block input {
+    width: 100px;
+    margin-bottom: 0;
+  }
+}
+
+/* ===== Прогресс-бар ===== */
+.progress-container {
+  width: 80%;
+  max-width: 400px;
+  margin: 20px auto;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 30px;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+.progress-bar {
+  height: 100%;
+  background-color: #4CAF50;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+.progress-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* ===== Управление яркостью ===== */
+.brightness-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+.brightness-block label {
+  margin-bottom: 5px;
+}
+.brightness-block input[type=range] {
+  width: 80%;
+  max-width: 300px;
+  margin-bottom: 10px;
+}
+.brightness-block span {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+@media (min-width: 600px) {
+  .brightness-block {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+  }
+  .brightness-block input[type=range] {
+    width: 200px;
+    margin-bottom: 0;
+  }
+}
+
+/* ===== Настройка типа датчика уровня ===== */
+.level-config-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+.level-config-block label {
+  margin-bottom: 5px;
+}
+.level-config-block select {
+  width: 80%;
+  max-width: 300px;
+  margin-bottom: 10px;
+}
+@media (min-width: 600px) {
+  .level-config-block {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+  }
+  .level-config-block select {
+    width: auto;
+    margin-bottom: 0;
+  }
+}
+
+/* ===== Выбор типа калибровки ===== */
+.calibration-type {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 20px 0;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+
+.calibration-type label {
+  margin: 5px 0;
+  font-weight: normal;
+  display: inline-flex;
+  align-items: center;
+}
+
+.calibration-type input[type="radio"] {
+  margin-right: 8px;
+  width: auto;
+}
+
+@media (min-width: 600px) {
+  .calibration-type {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  .calibration-type label {
+    margin: 5px 10px;
+  }
+}
+
+/* ===== Навигация ===== */
+.nav-links {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+}
+
+.nav-links a {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 8px;
+  font-size: 15px;
+}
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Формы ===== */
+label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+  color: #495057;
+}
+
+input[type=text],
+input[type=password],
+input[type=number],
+select {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 12px;
+  margin: 4px 0 8px 0;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 15px;
+  background-color: white;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+/* Чекбоксы и радио */
+.checkbox-group {
+  margin: 10px 0;
+}
+.checkbox-group label {
+  display: inline-block;
+  margin-right: 15px;
+  font-weight: normal;
+  margin-top: 0;
+}
+
+.checkbox-label {
+  display: block;
+  margin: 15px 0;
+  font-weight: normal;
+}
+.checkbox-label input {
+  width: auto;
+  margin-right: 5px;
+}
+
+/* ===== Таблицы ===== */
+.overflow-table {
+  overflow-x: auto;
+  margin: 20px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  border: 1px solid #dee2e6;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background-color: #f1f3f5;
+  color: #495057;
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+/* ===== Индикатор загрузки ===== */
+.loader {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #007bff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== Адаптивность для мобильных ===== */
+@media (max-width: 600px) {
+  body {
+    padding: 8px;
+  }
+  main {
+    padding: 15px;
+  }
+  h1 {
+    font-size: 1.8em;
+  }
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+  .button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn {
+    width: 100%;
+  }
+  .nav-links a {
+    display: block;
+    margin: 5px 0;
+  }
+  input, select {
+    max-width: 100%;
+  }
+  .checkbox-group label {
+    display: block;
+    margin: 5px 0;
+  }
+}

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title data-i18n="diagnostics">Диагностика</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .diagnostics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .diagnostic-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .diagnostic-card h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+            color: #495057;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 6px;
+        }
+        .diagnostic-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .diagnostic-label {
+            font-weight: 500;
+            color: #6c757d;
+        }
+        .diagnostic-value {
+            font-family: monospace;
+            font-weight: bold;
+            color: #212529;
+        }
+        .refresh-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .refresh-btn:hover {
+            background: #0069d9;
+        }
+        .warning {
+            color: #dc3545;
+        }
+        .ok {
+            color: #28a745;
+        }
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1 data-i18n="diagnostics">Диагностика системы</h1>
+
+        <div class="diagnostics-grid" id="diagnosticsGrid">
+            <!-- Заполняется JavaScript -->
+        </div>
+
+        <div class="button-group">
+            <button class="refresh-btn" onclick="loadDiagnostics()">🔄 Обновить</button>
+        </div>
+
+        <div class="nav-links">
+            <a href="/" data-i18n="back">На главную</a>
+        </div>
+        <div class="lang-switcher">
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="ru">RU</button>
+        </div>
+    </main>
+
+    <script>
+        // Переводы
+        const translations = {
+            en: {
+                diagnostics: "System Diagnostics",
+                back: "Home",
+                general: "General",
+                memory: "Memory",
+                filesystem: "File System",
+                wifi: "WiFi",
+                version: "Version",
+                uptime: "Uptime",
+                uptimeValue: (days, hours, minutes, seconds) => `${days}d ${hours}h ${minutes}m ${seconds}s`,
+                freeHeap: "Free Heap",
+                freeHeapValue: (bytes) => `${(bytes / 1024).toFixed(1)} KB`,
+                littlefsTotal: "LittleFS Total",
+                littlefsUsed: "LittleFS Used",
+                littlefsFree: "LittleFS Free",
+                sketchSize: "Sketch Size",
+                sketchFree: "Free Sketch Space",
+                ssid: "SSID",
+                ip: "IP Address",
+                rssi: "Signal (RSSI)",
+                mode: "Mode",
+                modeSta: "Station",
+                modeAp: "Access Point",
+                modeApSta: "AP+STA",
+                unknown: "Unknown",
+                connected: "Connected",
+                disconnected: "Disconnected",
+                notConfigured: "Not configured"
+            },
+            ru: {
+                diagnostics: "Диагностика системы",
+                back: "На главную",
+                general: "Общее",
+                memory: "Память",
+                filesystem: "Файловая система",
+                wifi: "WiFi",
+                version: "Версия",
+                uptime: "Время работы",
+                uptimeValue: (days, hours, minutes, seconds) => `${days}д ${hours}ч ${minutes}м ${seconds}с`,
+                freeHeap: "Свободная память",
+                freeHeapValue: (bytes) => `${(bytes / 1024).toFixed(1)} КБ`,
+                littlefsTotal: "LittleFS всего",
+                littlefsUsed: "LittleFS занято",
+                littlefsFree: "LittleFS свободно",
+                sketchSize: "Размер скетча",
+                sketchFree: "Свободно в скетче",
+                ssid: "SSID",
+                ip: "IP-адрес",
+                rssi: "Сигнал (RSSI)",
+                mode: "Режим",
+                modeSta: "Клиент",
+                modeAp: "Точка доступа",
+                modeApSta: "AP+STA",
+                unknown: "Неизвестно",
+                connected: "Подключено",
+                disconnected: "Отключено",
+                notConfigured: "Не настроено"
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'ru';
+
+        function applyLanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key] && typeof translations[currentLang][key] === 'string') {
+                    el.innerText = translations[currentLang][key];
+                }
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === currentLang);
+            });
+        }
+
+        function formatUptime(seconds) {
+            const days = Math.floor(seconds / 86400);
+            const hours = Math.floor((seconds % 86400) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return translations[currentLang].uptimeValue(days, hours, minutes, secs);
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            return (bytes / 1024).toFixed(1) + ' KB';
+        }
+
+        function formatRssi(rssi) {
+            if (rssi >= -50) return '🟢 ' + rssi + ' dBm';
+            if (rssi >= -70) return '🟡 ' + rssi + ' dBm';
+            return '🔴 ' + rssi + ' dBm';
+        }
+
+        function createCard(title) {
+            const card = document.createElement('div');
+            card.className = 'diagnostic-card';
+            const h3 = document.createElement('h3');
+            h3.innerText = title;
+            card.appendChild(h3);
+            return card;
+        }
+
+        function addRow(card, label, value) {
+            const row = document.createElement('div');
+            row.className = 'diagnostic-row';
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'diagnostic-label';
+            labelSpan.innerText = label;
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'diagnostic-value';
+            valueSpan.innerText = value;
+            row.appendChild(labelSpan);
+            row.appendChild(valueSpan);
+            card.appendChild(row);
+        }
+
+        async function loadDiagnostics() {
+            console.log('loadDiagnostics() called');
+            const grid = document.getElementById('diagnosticsGrid');
+            if (!grid) {
+                console.error('diagnosticsGrid not found');
+                return;
+            }
+
+            grid.innerHTML = '<div class="diagnostic-card" style="text-align:center;">Загрузка данных...</div>';
+
+            try {
+                const response = await fetch('/api/diagnostics');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                console.log('Diagnostics data received:', data);
+
+                grid.innerHTML = '';
+
+                // Карточка "Общее"
+                const generalCard = createCard(translations[currentLang].general);
+                addRow(generalCard, translations[currentLang].version, data.version);
+                addRow(generalCard, translations[currentLang].uptime, formatUptime(data.uptime));
+                grid.appendChild(generalCard);
+
+                // Карточка "Память"
+                const memCard = createCard(translations[currentLang].memory);
+                addRow(memCard, translations[currentLang].freeHeap, translations[currentLang].freeHeapValue(data.freeHeap));
+                addRow(memCard, translations[currentLang].sketchSize, formatBytes(data.sketchSize));
+                addRow(memCard, translations[currentLang].sketchFree, formatBytes(data.sketchFree));
+                grid.appendChild(memCard);
+
+                // Карточка "Файловая система"
+                const fsCard = createCard(translations[currentLang].filesystem);
+                addRow(fsCard, translations[currentLang].littlefsTotal, formatBytes(data.littlefs.total));
+                addRow(fsCard, translations[currentLang].littlefsUsed, formatBytes(data.littlefs.used));
+                addRow(fsCard, translations[currentLang].littlefsFree, formatBytes(data.littlefs.free));
+                grid.appendChild(fsCard);
+
+                // Карточка "WiFi"
+                const wifiCard = createCard(translations[currentLang].wifi);
+                let modeText = translations[currentLang].unknown;
+                if (data.wifi.mode === 1) modeText = translations[currentLang].modeSta;
+                else if (data.wifi.mode === 2) modeText = translations[currentLang].modeAp;
+                else if (data.wifi.mode === 3) modeText = translations[currentLang].modeApSta;
+                addRow(wifiCard, translations[currentLang].mode, modeText);
+                addRow(wifiCard, translations[currentLang].ssid, data.wifi.ssid || translations[currentLang].notConfigured);
+                addRow(wifiCard, translations[currentLang].ip, data.wifi.ip || translations[currentLang].disconnected);
+                if (data.wifi.rssi !== undefined && data.wifi.rssi !== 0) {
+                    addRow(wifiCard, translations[currentLang].rssi, formatRssi(data.wifi.rssi));
+                }
+                grid.appendChild(wifiCard);
+
+            } catch (err) {
+                console.error('Failed to load diagnostics:', err);
+                grid.innerHTML = `<div class="error-message">Ошибка загрузки данных: ${err.message}</div>`;
+            }
+        }
+
+        // Инициализация страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded');
+            const savedLang = localStorage.getItem('lang') || 'ru';
+            currentLang = savedLang;
+            applyLanguage();
+            loadDiagnostics(); // загружаем один раз при загрузке страницы
+            // Автообновление удалено
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentLang = btn.dataset.lang;
+                    localStorage.setItem('lang', currentLang);
+                    applyLanguage();
+                    loadDiagnostics(); // обновляем данные при смене языка
+                });
+            });
+        });
+    </script>
+</body>
+</html>

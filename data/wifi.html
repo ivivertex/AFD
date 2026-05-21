@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title data-i18n="wifiTitle">Настройки WiFi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main>
+        <h1 data-i18n="wifiTitle">Настройки WiFi</h1>
+
+        <div class="button-group">
+            <button class="btn btn-primary" id="scanBtn" onclick="scanNetworks()" data-i18n="scanNetworks">Сканировать сети</button>
+        </div>
+
+        <select id="ssidSelect" onchange="setSSID()">
+            <option value="" data-i18n="selectNetwork">-- Выберите сеть --</option>
+        </select>
+
+        <form onsubmit="event.preventDefault(); saveWiFiConfig();">
+            <label for="ssid" data-i18n="ssid">SSID (домашней сети):</label>
+            <input type="text" id="ssid" name="ssid" required>
+
+            <label for="password" data-i18n="password">Пароль домашней сети:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="apPassword" data-i18n="apPassword">Пароль точки доступа (AP):</label>
+            <input type="password" id="apPassword" name="apPassword">
+
+            <label class="checkbox-label">
+                <input type="checkbox" id="useStaticIP" onclick="toggleStaticIP(this.checked)">
+                <span data-i18n="useStaticIP">Использовать статический IP</span>
+            </label>
+
+            <div id="staticFields" style="display:none;">
+                <label for="staticIP" data-i18n="staticIP">IP-адрес:</label>
+                <input type="text" id="staticIP" name="staticIP" placeholder="192.168.1.100">
+
+                <label for="gateway" data-i18n="gateway">Шлюз:</label>
+                <input type="text" id="gateway" name="gateway" placeholder="192.168.1.1">
+
+                <label for="subnet" data-i18n="subnet">Маска подсети:</label>
+                <input type="text" id="subnet" name="subnet" placeholder="255.255.255.0">
+
+                <label for="dns1" data-i18n="dns1">DNS 1 (необязательно):</label>
+                <input type="text" id="dns1" name="dns1" placeholder="8.8.8.8">
+
+                <label for="dns2" data-i18n="dns2">DNS 2 (необязательно):</label>
+                <input type="text" id="dns2" name="dns2" placeholder="8.8.4.4">
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary" id="saveBtn" data-i18n="saveRestart">Сохранить и перезагрузить</button>
+            </div>
+        </form>
+
+        <div class="button-group">
+            <button class="btn btn-danger" onclick="resetWiFiConfig()" data-i18n="resetWiFi">Сбросить настройки WiFi</button>
+        </div>
+
+        <div class="nav-links">
+            <a href="/" data-i18n="back">На главную</a>
+        </div>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>

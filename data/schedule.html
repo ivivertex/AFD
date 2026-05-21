@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title data-i18n="schedule">Расписание</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main>
+        <h1 data-i18n="schedule">Расписание</h1>
+
+        <!-- Предупреждение о необходимости калибровки -->
+        <div id="flowRateWarning" class="status-card" style="color: #dc3545; display: none;" data-i18n="flowRateWarning">
+            Внимание: калибровка не выполнена! Пожалуйста, сначала выполните калибровку.
+        </div>
+
+        <h2 data-i18n="addJob">Добавить задание</h2>
+        <form id="addForm">
+            <!-- Единое поле времени вместо двух отдельных -->
+            <label for="jobTime" data-i18n="jobTimeLabel">Время:</label>
+            <input type="time" id="jobTime" required step="60">
+
+            <label for="volume" data-i18n="volumeMl">Объём (мл):</label>
+            <input type="number" id="volume" min="1" required>
+            <!-- Блок volumeWarning удалён -->
+
+            <label data-i18n="days">Дни недели:</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="mon" value="1"> <span data-i18n="mon">Пн</span></label>
+                <label><input type="checkbox" id="tue" value="2"> <span data-i18n="tue">Вт</span></label>
+                <label><input type="checkbox" id="wed" value="4"> <span data-i18n="wed">Ср</span></label>
+                <label><input type="checkbox" id="thu" value="8"> <span data-i18n="thu">Чт</span></label>
+                <label><input type="checkbox" id="fri" value="16"> <span data-i18n="fri">Пт</span></label>
+                <label><input type="checkbox" id="sat" value="32"> <span data-i18n="sat">Сб</span></label>
+                <label><input type="checkbox" id="sun" value="64"> <span data-i18n="sun">Вс</span></label>
+            </div>
+
+            <label class="checkbox-label">
+                <input type="checkbox" id="enabled" checked>
+                <span data-i18n="enabled">Активно</span>
+            </label>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" onclick="addJob()" data-i18n="addJob">Добавить задание</button>
+            </div>
+        </form>
+
+        <h2 data-i18n="existingJobs">Существующие задания</h2>
+        <div class="overflow-table">
+            <table id="jobTable">
+                <thead>
+                    <tr>
+                        <th data-i18n="id">ID</th>
+                        <th data-i18n="time">Время</th>
+                        <th data-i18n="volumeMl">Объём (мл)</th>
+                        <th data-i18n="duration">Длительность</th>
+                        <th data-i18n="days">Дни</th>
+                        <th data-i18n="enabled">Активно</th>
+                        <th data-i18n="actions">Действия</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="nav-links">
+            <a href="/" data-i18n="back">На главную</a>
+        </div>
+        <div class="lang-switcher">
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="ru">RU</button>
+        </div>
+    </main>
+
+    <script src="/script.js"></script>
+    <script>
+      // Проверка калибровки при загрузке страницы
+      document.addEventListener('DOMContentLoaded', function() {
+        fetchJSON('/calibration/status')
+          .then(data => {
+            if (!data.calibrated) {
+              window.location.replace('/calibrate');
+            }
+          })
+          .catch(err => console.error('Failed to check calibration status', err));
+      });
+    </script>
+</body>
+</html>
