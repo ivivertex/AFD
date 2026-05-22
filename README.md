@@ -1,72 +1,269 @@
-# Pump Control System 🌊
-The Pump Control System is an Arduino-based project designed to manage and control a pump using a web-based interface and MQTT protocol. The system provides a comprehensive set of features, including scheduling, calibration, and real-time monitoring, to ensure efficient and reliable pump operation.
+# AFD Pump Controller – Автоматический дозатор удобрений
+
+
+**AFD Pump Controller** – программно-аппаратный комплекс на базе ESP8266 для управления перистальтическим (или любым другим) насосом. Система предназначена для автоматической дозировки жидких удобрений, добавок или других жидкостей с точностью до миллилитра.
+
+---
 
 ## 🚀 Features
-* Web-based interface for remote monitoring and control
-* MQTT protocol for real-time communication and data exchange
-* Scheduling feature for automated pump operation
-* Calibration feature for accurate pump performance
-* Real-time monitoring of pump state, level sensor readings, and system status
-* WiFi connectivity for easy setup and configuration
-* LittleFS file system for storing configuration data and scheduled jobs
+
+- **Автоматическая подача по расписанию** – задания на определённое время, дни недели и объём.
+- **Ручной запуск** – через веб‑интерфейс, физическую кнопку или команды MQTT.
+- **Калибровка расхода насоса** – четыре метода: обычная, многократная (3 замера), фиксированное время, ручной ввод.
+- **Мониторинг уровня жидкости** – при низком уровне работа насоса блокируется.
+- **Удалённое управление** – MQTT с поддержкой Home Assistant Discovery.
+- **Визуализация статуса** – LCD‑дисплей 16×2 и цветной светодиод WS2812.
+- **Веб‑интерфейс с WebSocket** – мгновенное обновление состояния без перезагрузки страницы.
+- **Сохранение всех настроек** – WiFi, MQTT, калибровка, расписание – во встроенной файловой системе LittleFS.
+
+---
 
 ## 🛠️ Tech Stack
-* Arduino framework
-* ESP8266WebServer library for web server functionality
-* PubSubClient library for MQTT client functionality
-* LittleFS library for file system operations
-* ArduinoJson library for JSON parsing and generation
-* WiFiManager library for WiFi operations
-* ConfigManager library for configuration data management
-* PumpControl library for pump control functionality
-* SchedulerManager library for scheduling jobs
-* SystemStatus library for system status management
-* TaskRunner library for task management
+
+| Компонент             | Технологии / библиотеки                                                                 |
+|-----------------------|-----------------------------------------------------------------------------------------|
+| **Микроконтроллер**   | ESP8266 (XTensa LX106)                                                                  |
+| **Язык прошивки**     | C++ (Arduino framework)                                                                 |
+| **Веб‑сервер**        | ESP8266WebServer, WebSockets (ws://)                                                    |
+| **MQTT**              | PubSubClient, WiFiClient                                                                |
+| **JSON**              | ArduinoJson (статическая и динамическая память)                                         |
+| **Файловая система**  | LittleFS                                                                                |
+| **Дисплей**           | hd44780_I2Cexp, Wire                                                                    |
+| **Светодиод**         | FastLED (WS2812)                                                                        |
+| **Часы реального времени** | RTClib (DS1307)                                                                   |
+| **Фронтенд**          | HTML5, CSS3, Vanilla JavaScript (ES6), WebSocket API, адаптивный дизайн                 |
+| **Протоколы**         | HTTP, WebSocket, MQTT, NTP                                                              |
+
+---
 
 ## 📦 Installation
-To install the Pump Control System, follow these steps:
-1. Clone the repository to your local machine
-2. Install the required libraries using the Arduino Library Manager
-3. Configure the WiFi settings and MQTT broker details in the `ConfigManager.h` file
-4. Upload the code to your Arduino board
-5. Access the web-based interface using a web browser
 
-## 💻 Usage
-To use the Pump Control System, follow these steps:
-1. Access the web-based interface using a web browser
-2. Configure the pump settings, scheduling, and calibration using the web interface
-3. Monitor the pump state, level sensor readings, and system status in real-time
-4. Use the MQTT protocol to receive real-time updates and control the pump remotely
+### Требования к оборудованию
+- Плата ESP8266 (NodeMCU, Wemos D1 mini и т.п.)
+- Реле/транзистор для управления насосом (пин `D8`)
+- Датчик уровня (поплавковый, оптопара и т.п.) – пин `D6`
+- Тактильная кнопка для ручного пуска – пин `D5`
+- Кнопка «Reset» (или комбинация для сброса) – пин `D4`
+- LED‑лента / светодиод WS2812 – пин `D3`
+- ЖК‑дисплей 16×2 на I2C (PCF8574) – адрес `0x27`
+- (Опционально) RTC DS1307 для хранения времени
+- Блок питания 5V
 
-## 📂 Project Structure
-```markdown
-pump_control_system/
-|-- pump_control.ino
-|-- PumpControl.h
-|-- PumpControl.cpp
-|-- SchedulerManager.h
-|-- SchedulerManager.cpp
-|-- ConfigManager.h
-|-- ConfigManager.cpp
-|-- WebServer.h
-|-- WebServer.cpp
-|-- MQTTManager.h
-|-- MQTTManager.cpp
-|-- SystemStatus.h
-|-- SystemStatus.cpp
-|-- TaskRunner.h
-|-- TaskRunner.cpp
-|-- LittleFS/
-|-- WiFiManager/
-|-- PubSubClient/
-|-- ArduinoJson/
-|-- README.md
-```
+### Необходимое ПО
+1. **Arduino IDE** (версия 1.8.19 или новее) или **PlatformIO**.
+2. Поддержка плат ESP8266: в Arduino IDE через менеджер плат установите `esp8266 by ESP8266 Community` (версия 3.1.2 и выше).
+3. Библиотеки (установить через менеджер библиотек или скачать вручную):
+   - `ArduinoJson` (≥6.19.4)
+   - `PubSubClient` (≥2.8)
+   - `FastLED` (≥3.5.0)
+   - `RTClib` (≥2.1.2)
+   - `WebSockets` (≥2.3.5)
+   - `hd44780` (≥1.3.0)
+   - `Wire` (встроенная)
+   - `LittleFS` (встроенная)
+4. Инструмент для загрузки файловой системы: **LittleFS Upload Tool** (если используете Arduino IDE) – см. [esp8266fs](https://github.com/esp8266/arduino-esp8266fs-plugin).
 
-## 📸 Screenshots
+### Сборка и прошивка
+1. Клонируйте репозиторий:
+   ```bash
+   git clone https://github.com/your-username/afd-pump-controller.git
+   cd afd-pump-controller
+Откройте файл pump_control.ino в Arduino IDE.
 
-## 🤝 Contributing
-To contribute to the Pump Control System, please fork the repository and submit a pull request with your changes.
+Выберите плату (например, NodeMCU 1.0 или LOLIN(WEMOS) D1 mini).
 
-## 📝 License
-The Pump Control System is licensed under the MIT License.
+Установите параметры последовательного порта.
+
+Скомпилируйте и загрузите прошивку (Скетч → Загрузить).
+
+Загрузите файловую систему (через меню Инструменты → ESP8266 LittleFS Data Upload).
+Это скопирует файлы index.html, style.css, script.js, wifi.html, calibrate.html, schedule.html, time.html, mqtt.html, config.html, diagnostics.html на ESP8266.
+
+Первое включение
+При первом запуске (нет сохранённых настроек WiFi) устройство создаст точку доступа AFD (пароль 12345678).
+
+Подключитесь к этой точке доступа со своего смартфона/компьютера.
+
+Откройте браузер и перейдите по адресу 192.168.4.1.
+
+Зайдите в раздел WiFi, выберите свою домашнюю сеть и введите пароль. Нажмите «Сохранить и перезагрузить».
+
+После перезагрузки устройство подключится к вашей сети. Его IP‑адрес будет отображаться на LCD‑дисплее.
+
+💻 Usage
+Базовое управление через веб‑интерфейс
+Откройте в браузере IP‑адрес устройства.
+
+На главной странице вы увидите статус насоса, уровень, калибровку и подключение MQTT.
+
+Кнопка ON/OFF включает/выключает насос напрямую.
+
+Поле Ручной запуск (мл) – введите объём и нажмите Запустить – насос отработает расчётное время.
+
+Калибровка расхода
+Перейдите в раздел Калибровка.
+
+Выберите тип калибровки:
+
+Обычная – засеките время налива известного объёма.
+
+Многократная (3 замера) – выполните 3 измерения, система усреднит.
+
+Фиксированное время – насос работает заданное время, затем вы вводите фактический объём.
+
+Ручной ввод – введите расход (мл/с) вручную.
+
+После успешной калибровки кнопка Старт калибровки сменится на Стоп – нажмите её по достижении целевого объёма (или по окончании времени).
+
+Настройка расписания
+В разделе Расписание добавьте задания: выберите время, объём, дни недели, активность.
+
+Система автоматически запустит дозирование при наступлении времени, если уровень жидкости достаточен и насос свободен.
+
+В таблице заданий отображается расчётная длительность (на основе откалиброванного расхода).
+
+MQTT и Home Assistant
+Настройте сервер MQTT в разделе MQTT (IP, порт, логин/пароль, префикс топиков).
+
+После сохранения устройство перезагрузится и подключится к MQTT.
+
+Для автоматического обнаружения в Home Assistant нажмите Отправить MQTT Discovery.
+
+Доступные топики (префикс по умолчанию AFD):
+
+AFD/set – команды ON/OFF.
+
+AFD/state – состояние насоса.
+
+AFD/level – OK/LOW.
+
+AFD/calibrate/state – статус калибровки (JSON).
+
+AFD/dispense/volume/set – установка целевого объёма дозирования.
+
+AFD/dispense/run – запуск дозирования (должен быть предварительно установлен объём).
+
+AFD/schedule/add, remove, update, get – управление расписанием через JSON.
+
+AFD/brightness/set – яркость светодиода (0–100).
+
+Кнопки и сброс
+Физическая кнопка (D5) – короткое нажатие включает/выключает насос (если уровень не LOW).
+
+Reset кнопка (D4):
+
+Удерживайте 3 секунды – перезагрузка устройства без сброса настроек.
+
+Удерживайте 10 секунд – полный сброс (удаление всех конфигураций) + перезагрузка.
+
+### 💡 LED Indicator
+
+В проекте используется адресный светодиод **WS2812** (подключён к пину `D3`). Он отображает текущее состояние системы с помощью цвета и режима свечения. Все режимы реализованы в классе `LedIndicator`.
+
+### 🎨 Режимы работы
+
+| Режим | Цвет / Эффект | Условие активации |
+|-------|---------------|--------------------|
+| `NORMAL` | Зелёный (solid) | Устройство работает нормально: насос выключен, уровень жидкости OK, не калибруется, не в AP-режиме. |
+| `NORMAL` | Синий (solid) | Насос включён (ручное или автоматическое дозирование), уровень OK. |
+| `NORMAL` | Оранжевый (solid) | Идёт калибровка (обычная или многократная). |
+| `BLINK` | Красный (мигание) | Низкий уровень жидкости – мигает с интервалом 400 мс. |
+| `RAINBOW` | Плавная смена цветов | Устройство находится в режиме точки доступа (**AP**) (нет подключения к WiFi). |
+
+### ⚙️ Алгоритм выбора режима (приоритет)
+
+Приоритет режимов определяется следующим образом:
+
+1. **Низкий уровень** (`LevelSensor::isLowLevel()`) → `BLINK` (красный)
+2. **Калибровка** (`SystemStatus::isCalibrating()`) → `NORMAL` (оранжевый)
+3. **Насос включён** (`isPumpOn()`) → `NORMAL` (синий)
+4. **Режим AP** (`isAPMode()`) → `RAINBOW`
+5. **Всё остальное** → `NORMAL` (зелёный)
+
+> ⚠️ Приоритет режимов жёстко задан:  
+> * низкий уровень перекрывает всё,  
+> * калибровка перекрывает насос,  
+> * AP-режим включается только если нет ни калибровки, ни активного насоса, ни низкого уровня.
+
+### 🔆 Яркость
+
+* **Яркость по умолчанию:** `64` (из диапазона 0–255), что соответствует примерно **25%**.
+* Пользователь может изменить яркость через **веб-интерфейс** (раздел *Конфигурация → «Яркость индикации»*). Значение сохраняется в файле `device.json`.
+* Также доступна **MQTT-команда** `AFD/brightness/set` с указанием процентов (0–100).
+
+### Технические детали
+
+| Параметр | Значение |
+|----------|----------|
+| Пин | `D3` (определено в `LedIndicator.h`) |
+| Тип ленты | *WS2812*, порядок цветов *GRB* |
+| Библиотека | **FastLED** (≥3.5.0) |
+| Количество светодиодов | 1 (один адресный LED) |
+| Обновление | Вызывается в каждом цикле `loop()` через `LedIndicator::update()` |
+
+- **Режим RAINBOW**: увеличивается на 2 каждые 30 мс (плавное вращение цветов)  
+- **Режим BLINK**: полупериод 200 мс (полный цикл 400 мс)
+
+### Примеры индикации
+
+| Сценарий | Индикация |
+|----------|------------|
+| Включение питания, WiFi подключен, насос выключен | Зелёный (постоянно) |
+| Нажата кнопка «Включить насос» (уровень OK) | Синий |
+| Запущена калибровка (обычная / многократная) | Оранжевый |
+| Уровень жидкости упал ниже датчика | Красное мигание |
+| Пропало WiFi-соединение, включился AP режим | Радужный перелив |
+| Во время AP режима пользователь заходит в веб‑интерфейс | Радужный (не меняется) |
+| Калибровка завершена, насос выключен, уровень OK | Возврат к зелёному |
+
+> *Индикация изменяется динамически в соответствии с текущим состоянием системы, обеспечивая оперативное визуальное оповещение.*
+
+### ⚙️ Configuration
+
+#### Константы настройки устройства
+
+| Константа | Значение по умолчанию | Описание |
+|-----------|----------------------|-----------|
+| `BUTTON_PIN` | `D5` | Пин кнопки ручного включения |
+| `LEVEL_PIN` | `D6` | Пин датчика уровня |
+| `RESET_BUTTON_PIN` | `D4` | Пин кнопки сброса |
+| `AP_SSID` | `"AFD"` | Имя точки доступа |
+| `AP_PASSWORD` | `"12345678"` | Пароль AP |
+| `WIFI_LOST_TIMEOUT` | `30000 ms` | Таймаут потери WiFi → переключение в *AP режим* |
+| `MQTT_DEFAULT_PORT` | `1883` | Порт **MQTT** по умолчанию |
+| `MQTT_DEFAULT_PREFIX` | `"AFD"` | Префикс топиков |
+| `CALIBRATION_TIMEOUT_US` | 10 минут (в микросек) | Таймаут калибровки |
+| `MAX_SCHEDULE_JOBS` | `100` | Максимум заданий в расписании |
+| `LCD_ADDRESS` | `0x27` | I2C адрес LCD |
+| `DEFAULT_LED_BRIGHTNESS` | `64` (≈25%) | Яркость светодиода (0–255) |
+
+#### Файлы конфигурации на **LittleFS**
+
+- `/wifi_config.json` – *SSID*, пароль, статический IP и т.д.
+- `/mqtt_config.json` – сервер, порт, логин, префикс, *NTP‑сервер*, часовой пояс.
+- `/device.json` – яркость светодиода, активный уровень датчика (`HIGH`/`LOW`).
+- `/calibration.json` – откалиброванный расход (мл/с) и целевой объём калибровки.
+- `/schedule.json` – массив заданий расписания.
+
+> Все параметры конфигурации хранятся в файлах на **LittleFS** и могут быть изменены через веб‑интерфейс.
+
+📸 Screenshots
+(Скриншоты веб‑интерфейса могут быть добавлены позже.)
+
+⚠️ Notes
+Точность дозирования напрямую зависит от качества калибровки и стабильности насоса.
+
+Низкий уровень жидкости (LOW) блокирует любой запуск насоса (ручной, по расписанию, MQTT).
+
+При включённом насосе по расписанию или ручному дозированию повторное нажатие кнопки останавливает текущую задачу.
+
+Для работы расписания необходимо корректное время (RTC или NTP). При отсутствии RTC время синхронизируется через NTP после подключения к WiFi.
+
+Если устройство потеряло WiFi, оно переходит в режим точки доступа через 30 секунд. При появлении домашней сети автоматически переключается обратно (проверка раз в 5 минут).
+
+🤝 Contributing
+Сообщения об ошибках, предложения по улучшению и pull request приветствуются.
+Пожалуйста, создавайте issue в репозитории GitHub.
+
+📝 License
+Проект распространяется под лицензией MIT. Используйте, модифицируйте и распространяйте свободно.
